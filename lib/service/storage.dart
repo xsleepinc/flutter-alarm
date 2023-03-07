@@ -44,7 +44,12 @@ class AlarmStorage {
 
     for (final key in keys) {
       if (key.startsWith(prefix)) {
-        alarms.add(AlarmSettings.fromJson(json.decode(prefs.getString(key))));
+        final value = prefs.getString(key);
+        if (value != null ){
+          alarms.add(AlarmSettings.fromJson(json.decode(value)));
+        }else {
+          prefs.remove(key);
+        }
       }
     }
     return alarms;
