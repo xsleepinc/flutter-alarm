@@ -6,6 +6,7 @@ public class SwiftAlarmPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "com.gdelataillade/alarm", binaryMessenger: registrar.messenger())
     let instance = SwiftAlarmPlugin()
+    instance.registrar = registrar
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
@@ -13,6 +14,7 @@ public class SwiftAlarmPlugin: NSObject, FlutterPlugin {
   public var notifOnKillEnabled: Bool!
   public var notificationTitleOnKill: String!
   public var notificationBodyOnKill: String!
+  public var registrar: FlutterPluginRegistrar!
 
   private func setUpAudio() {
     try! AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
@@ -60,7 +62,7 @@ public class SwiftAlarmPlugin: NSObject, FlutterPlugin {
     let loopAudio = args["loopAudio"] as! Bool
     let fadeDuration = args["fadeDuration"] as! Double
 
-    if let audioPath = Bundle.main.path(forResource: assetAudio, ofType: nil) {
+    if let audioPath = Bundle.main.path(forResource: self.registrar.lookupKey(forAsset: assetAudio), ofType: nil) {
       let audioUrl = URL(fileURLWithPath: audioPath)
       do {
         self.audioPlayer = try AVAudioPlayer(contentsOf: audioUrl)

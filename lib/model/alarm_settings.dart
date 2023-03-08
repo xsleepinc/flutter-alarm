@@ -61,7 +61,7 @@ class AlarmSettings {
 
   /// Converts json data to an AlarmSettings
   factory AlarmSettings.fromJson(Map<String, dynamic> json) => AlarmSettings(
-        id: json['id'] as int,
+        id: (json['id'] ?? json['int']) as int, // fix the typo
         dateTime: DateTime.fromMicrosecondsSinceEpoch(json['dateTime'] as int),
         assetAudioPath: json['assetAudioPath'] as String,
         loopAudio: json['loopAudio'] as bool,
@@ -72,7 +72,7 @@ class AlarmSettings {
 
   /// Converts an AlarmSettings to json data
   Map<String, dynamic> toJson() => {
-        'int': id,
+        'id': id,
         'dateTime': dateTime.microsecondsSinceEpoch,
         'assetAudioPath': assetAudioPath,
         'loopAudio': loopAudio,

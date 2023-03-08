@@ -44,10 +44,13 @@ class AlarmStorage {
 
     for (final key in keys) {
       if (key.startsWith(prefix)) {
-        final value = prefs.getString(key);
-        if (value != null ){
-          alarms.add(AlarmSettings.fromJson(json.decode(value)));
-        }else {
+
+        try {
+          final value = prefs.getString(key);
+          if (value == null) throw Exception('Empty saving $key');
+          final decoded = json.decode(value);
+          alarms.add(AlarmSettings.fromJson(decoded));
+        }catch(e) {
           prefs.remove(key);
         }
       }

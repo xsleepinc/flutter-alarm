@@ -15,6 +15,7 @@ import 'package:just_audio/just_audio.dart';
 class AndroidAlarm {
   static String ringPort = 'alarm-ring';
   static String stopPort = 'alarm-stop';
+  static String id2RingPort(int id)=>"$ringPort-$id";
 
   /// Initializes AndroidAlarmManager dependency
   static Future<void> init() => AndroidAlarmManager.initialize();
@@ -38,12 +39,12 @@ class AndroidAlarm {
       final ReceivePort port = ReceivePort();
       final success = IsolateNameServer.registerPortWithName(
         port.sendPort,
-        "$ringPort-$id",
+        id2RingPort(id),
       );
 
       if (!success) {
-        IsolateNameServer.removePortNameMapping("$ringPort-$id");
-        IsolateNameServer.registerPortWithName(port.sendPort, "$ringPort-$id");
+        IsolateNameServer.removePortNameMapping(id2RingPort(id));
+        IsolateNameServer.registerPortWithName(port.sendPort, id2RingPort(id));
       }
       port.listen((message) {
         print('[Alarm] $message');
@@ -97,7 +98,7 @@ class AndroidAlarm {
   @pragma('vm:entry-point')
   static Future<void> playAlarm(int id, Map<String, dynamic> data) async {
     final audioPlayer = AudioPlayer();
-    SendPort send = IsolateNameServer.lookupPortByName(ringPort)!;
+    SendPort send = IsolateNameServer.lookupPortByName(id2RingPort(id))!;
 
     // TODO: Check if observer already exists
     stopNotificationOnKillService();

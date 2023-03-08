@@ -55,8 +55,19 @@ class Alarm {
     if (settings.enableNotificationOnKill) {
       await AlarmNotification.instance.requestPermission();
     }
-
-    if (iOS) {
+    var fun = iOS ? IOSAlarm.setAlarm : AndroidAlarm.set;
+    return fun(
+      settings.id,
+      settings.dateTime,
+          () => ringStream.add(settings),
+      settings.assetAudioPath,
+      settings.loopAudio,
+      settings.fadeDuration,
+      settings.notificationTitle,
+      settings.notificationBody,
+      settings.enableNotificationOnKill,
+    );
+    /* if (iOS) {
       final assetAudio = settings.assetAudioPath.split('/').last;
       return IOSAlarm.setAlarm(
         settings.id,
@@ -81,7 +92,7 @@ class Alarm {
       settings.notificationTitle,
       settings.notificationBody,
       settings.enableNotificationOnKill,
-    );
+    ); */
   }
 
   /// When the app is killed, all the processes are terminated
